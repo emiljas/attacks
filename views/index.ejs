@@ -4,17 +4,42 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <meta charset='utf-8' />
+    <link rel="stylesheet" href="highlightjs/styles/default.css" />
+    <script src="highlightjs/highlight.pack.js"></script>
+    <style>
+    main {
+      margin: 0 auto;
+      width: 1024px;
+    }
+
+    #notes .note {
+      width: 200px;
+    }
+
+    #notes .title {
+      font-weight: bold;
+    }
+
+    #sqlQuery {
+      font-weight: bold;
+    }
+    </style>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <main>
+      <h1>Notatki Leny</h1>
 
+      <label>
+        szukaj:
+        <input id="noteTitle" type="text" autofocus />
+      </label>
+      <div id="notes"></div>
 
-    <input id="noteTitle" type="text" />
-
-    <div id="notes">
-
-    </div>
+      <p>
+        podgląd zapytania sql:
+        <pre><code id="sqlQuery" class="sql"></code></pre>
+      </p>
+    </main>
 
     <script>
     var noteTitleInput = document.getElementById("noteTitle")
@@ -32,8 +57,11 @@
       req.onreadystatechange = function () {
         if (req.readyState == 4) {
           if(req.status == 200)
-            var notes = JSON.parse(req.responseText);
-            showNotes(notes);
+            var ret= JSON.parse(req.responseText);
+            console.log(ret);
+            showNotes(ret.notes);
+            document.getElementById("sqlQuery").textContent = ret.sqlQuery;
+            hljs.highlightBlock(document.getElementById("sqlQuery"));
         }
       };
       req.send(null)
@@ -43,7 +71,20 @@
       notesDiv.innerHTML = "";
       notes.forEach(function(note) {
         var noteDiv = document.createElement("div");
-        noteDiv.innerHTML = note.content;
+        noteDiv.style.backgroundColor = "#" + note.colorRGB;
+        noteDiv.className = "note";
+
+        var titleP = document.createElement("p");
+        titleP.className = "title";
+        titleP.innerHTML = note.title;
+
+        var contentP = document.createElement("p");
+        contentP.className = "content";
+        contentP.innerHTML = note.content;
+
+        noteDiv.appendChild(titleP);
+        noteDiv.appendChild(contentP);
+
         notesDiv.appendChild(noteDiv);
       });
     }

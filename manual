@@ -1,1 +1,3 @@
 DEBUG=Attacks:* ./bin/www
+
+mysql -u root -p1234567 < database.sql 

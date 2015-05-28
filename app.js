@@ -34,7 +34,7 @@ var currentUserId = 1;
 
 var test = express.Router();
 test.get('/', function(req, res, next) {
-  var input = req.param("input");
+  var input = req.query.input;
   console.log(input);
 
   var connection = mysql.createConnection({
@@ -45,10 +45,17 @@ test.get('/', function(req, res, next) {
   });
   connection.connect();
 
-  connection.query("select * from note where userId = " + currentUserId + " and title like '%" + input + "%';", function(err, rows, fields) {
-    if(err) throw err;
-    res.json(rows);
+  var sqlQuery = "select * from note where userId = " + currentUserId + " and (title like '%" + input + "%' or content like '%" + input + "%');";
+  connection.query(sqlQuery, function(err, rows, fields) {
+    console.log(err);
+    var ret = {
+      notes: rows ? rows : [],
+      sqlQuery: sqlQuery
+    };
+    res.json(ret);
   });
+
+  connection.end();
 });
 app.use('/test', test);
 
