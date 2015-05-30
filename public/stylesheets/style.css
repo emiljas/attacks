@@ -6,3 +6,32 @@ body {
 a {
   color: #00B7FF;
 }
+
+main {
+  margin: 0 auto;
+  width: 1024px;
+}
+
+#notesList .notes .note {
+  width: 400px;
+}
+
+#notesList .notes .note .title {
+  font-weight: bold;
+}
+
+#notesList .notes .note .sqlQuery {
+  font-weight: bold;
+}
+
+.table {
+  display: table;
+}
+
+.row {
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+}

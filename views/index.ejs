@@ -6,70 +6,133 @@
     <meta charset='utf-8' />
     <link rel="stylesheet" href="highlightjs/styles/default.css" />
     <script src="highlightjs/highlight.pack.js"></script>
-    <style>
-    main {
-      margin: 0 auto;
-      width: 1024px;
-    }
-
-    #notes .note {
-      width: 200px;
-    }
-
-    #notes .title {
-      font-weight: bold;
-    }
-
-    #sqlQuery {
-      font-weight: bold;
-    }
-    </style>
   </head>
   <body>
     <main>
-      <h1>Notatki Leny</h1>
+      <input id="dbResetBtn" type="button" value="Przywróć bazę do stanu początkowego" />
 
-      <label>
-        szukaj:
-        <input id="noteTitle" type="text" autofocus />
-      </label>
-      <div id="notes"></div>
+      <div id="addNote">
+        <h1>Nowa notatka</h1><br />
+        <div class="table">
+          <div class="row">
+            <div class="cell"><label for="addNoteTitle">tytuł: </label></div>
+            <div class="cell"><input id="addNoteTitle" class="title" type="text" /></div>
+          </div>
+          <div class="row">
+            <div class="cell"><label for="addNoteContent">treść: </label></div>
+            <div class="cell"><input id="addNoteContent" class="content" type="text" /></div>
+          </div>
+        </div>
+        <input class="submit" type="button" value="dodaj" />
+      </div>
 
-      <p>
-        podgląd zapytania sql:
-        <pre><code id="sqlQuery" class="sql"></code></pre>
-      </p>
+      <div id="notesList">
+        <h1>Notatki Leny</h1>
+
+        <label>
+          szukaj:
+          <input class="searcher" type="text" autofocus />
+        </label>
+
+        <div class="notes"></div>
+
+        <p>
+          podgląd zapytania sql:
+          <pre><code class="sqlQuery" class="sql"></code></pre>
+        </p>
+      </div>
     </main>
 
     <script>
-    var noteTitleInput = document.getElementById("noteTitle")
-    var notesDiv = document.getElementById("notes");
+    var $ = document.querySelector.bind(document);
 
-    noteTitleInput.addEventListener("input", function(e) {
-      var input = e.target.value;
-      onInputChanged(input);
-    });
+    var utils = (function() {
+      function gettingJson(url) {
+        return new Promise(function(resolve) {
+          var req = new XMLHttpRequest();
+          req.open("get", url, true);
+          req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=utf-8')
+          req.onreadystatechange = function () {
+            if (req.readyState == 4) {
+              if(req.status == 200)
+                var ret= JSON.parse(req.responseText);
+                resolve(ret);
+            }
+          };
+          req.send(null)
+        });
+      }
 
-    function onInputChanged(input) {
-      var req = new XMLHttpRequest();
-      req.open("GET", "/test?input=" + encodeURIComponent(input), true);
-      req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=utf-8')
-      req.onreadystatechange = function () {
-        if (req.readyState == 4) {
-          if(req.status == 200)
-            var ret= JSON.parse(req.responseText);
-            console.log(ret);
-            showNotes(ret.notes);
-            document.getElementById("sqlQuery").textContent = ret.sqlQuery;
-            hljs.highlightBlock(document.getElementById("sqlQuery"));
+      function posting(url, data) {
+        var formData = new FormData();
+        for(var property in data) {
+          if(data.hasOwnProperty(property))
+            formData.append(property, data[property]);
         }
-      };
-      req.send(null)
-    }
 
-    function showNotes(notes) {
-      notesDiv.innerHTML = "";
-      notes.forEach(function(note) {
+        return new Promise(function(resolve) {
+          var req = new XMLHttpRequest();
+          req.open("post", url, true);
+
+          req.onreadystatechange = function () {
+            if (req.readyState == 4) {
+              if(req.status == 200)
+                resolve();
+            }
+          };
+          req.send(formData);
+        });
+      }
+
+      return {
+        gettingJson: gettingJson,
+        posting: posting
+      };
+    })();
+
+    (function() {
+      var dbResetBtn = $("#dbResetBtn");
+
+      dbResetBtn.addEventListener("click", function() {
+        utils.gettingJson("/resetDb")
+        .then(function() {
+          console.log("db");
+        });
+      }, false);
+    })();
+
+    var notesList = (function() {
+      var noteTitleInput = $("#notesList .searcher")
+      var notesDiv = $("#notesList .notes");
+      var sqlQueryCode = $("#notesList .sqlQuery");
+
+      noteTitleInput.addEventListener("input", function(e) {
+        var input = e.target.value;
+        filterNotes(input);
+      });
+
+      function filterNotes(input) {
+        var url = "/test?input=" + encodeURIComponent(input);
+        utils.gettingJson(url)
+        .then(function(ret) {
+          renderNotes(ret.notes);
+          renderSqlQuery(ret.sqlQuery);
+        });
+      }
+
+      function renderSqlQuery(query) {
+        sqlQueryCode.textContent = query;
+        hljs.highlightBlock(sqlQueryCode);
+      }
+
+      function renderNotes(notes) {
+        notesDiv.innerHTML = "";
+        notes.forEach(function(note) {
+          renderNote(note);
+        });
+      }
+
+      function renderNote(note) {
         var noteDiv = document.createElement("div");
         noteDiv.style.backgroundColor = "#" + note.colorRGB;
         noteDiv.className = "note";
@@ -86,14 +149,31 @@
         noteDiv.appendChild(contentP);
 
         notesDiv.appendChild(noteDiv);
-      });
-    }
+      }
 
-    onInputChanged("");
+      filterNotes("");
+    })();
 
+    (function() {
+      var submitBtn = $("#addNote .submit");
+      var titleInput = $("#addNote .title");
+      var contentInput = $("#addNote .content");
 
+      submitBtn.addEventListener("click", function() {
+        console.log(titleInput.value);
+        addNote(titleInput.value, contentInput.value);
+      }, false);
+
+      function addNote(title, content) {
+        utils.posting("/addNote", {
+          title: title,
+          content: content
+        })
+        .then(function() {
+          console.log("works");
+        });
+      }
+    })();
     </script>
-
-
   </body>
 </html>
