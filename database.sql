@@ -51,14 +51,12 @@ insert into note(title, content, colorRGB, userId) values(
   @lenaUserId
 );
 
-insert into note(title, content, colorRGB, userId) values(
-  "xss",
-  ">'>""><img src=x onerror=alert(0)>",
-  @yellow,
-  @lenaUserId
-);
-
-
+-- insert into note(title, content, colorRGB, userId) values(
+--   "xss",
+--   ">'>""><img src=x onerror=alert(0)>",
+--   @yellow,
+--   @lenaUserId
+-- );
 
 set @oliwiaUserId = (select id from user where name = "Oliwia");
 set @red = "F99";

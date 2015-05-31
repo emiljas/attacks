@@ -8,9 +8,124 @@
   </head>
   <body>
     <main>
-      <input id="dbResetBtn" type="button" value="Przywróć bazę do stanu początkowego" />
 
-      <div id="addNote">
+      <div id="manual" class="form visible round">
+        <div class="slide slide-intro hide">
+          <p>OK, możemy zaczynać?</p>
+          <p>W tym polu będą się wyświetlały instrukcję, które należy wykonać.</p>
+          <p>Ich wykonanie pozwoli ci zaznajomić się z najczęstszymi atakami stosowanymi na stronach internetowych.</p>
+          <p>Jeśli w przyszłości masz zamiar napisać jakikolwiek kawałek kodu wykonywanego w przeglądarce lub na serwerze powinieneś o nich wiedzieć.</p>
+        </div>
+
+        <div class="slide slide-basicInformation hide">
+          <p>
+            Użyj przeglądarki Google Chrome.
+          </p>
+          <p>
+            Kod aplikacji, którą właśnie używasz została napisana wyłącznie w języku JavaScript. Zarówno część wykonywana w przeglądarce, jak i na serwerze.
+          </p>
+          <p>
+            Gdy zmienisz kod wykonywany po stronie przeglądarki wystarczy, że odświeżysz stronę.
+          </p>
+          <p>
+            Gdy zmienisz kod wykonywany po stronie serwera uruchom ponownie aplikację.
+          </p>
+          </p>
+        </div>
+
+        <div class="slide slide-sqlInjection">
+          <p>
+            Pierwszy atak, które wykonasz to <span class="important">SqlInjection</span>.
+          </p>
+          <p>
+            Załóżmy, że poniższy ekran to prawdziwa aplikacja, w której Lena zarządza swoimi notatkami.<br />
+            Lena wie, że z tej samej aplikacji korzysta również Oliwia.<br />
+            Aplikacja udostępnia funkcję filtrowania. W tym celu wykonywane jest zapytanie, które jest wyświetlane pod notatkami.<br />
+            Spróbuj teraz wylistować wszystkie notatki.
+          </p>
+        </div>
+
+        <div class="rightBtns">
+          <input class="back" type="button" value="Wstecz" />
+          <input id="dbResetBtn" type="button" value="Przywróć bazę do stanu początkowego" />
+          <input class="next" type="button" value="Dalej" />
+        </div>
+      </div>
+
+      <script>
+      var $ = document.querySelector.bind(document);
+      var $$ = document.querySelectorAll.bind(document);
+
+      (function() {
+        var backBtn = $("#manual .back");
+        var nextBtn = $("#manual .next");
+
+        var currentStepsIndex = 0;
+
+        var steps = [
+          {
+            name: "intro"
+          },
+          {
+            name: "basicInformation"
+          },
+          {
+            name: "sqlInjection",
+            isSolution: true,
+            init: function() {
+              var notesListContainer = $("#notesList");
+              notesListContainer.classList.add("visible");
+            }
+          }
+        ];
+
+        backBtn.addEventListener("click", function() {
+          if(currentStepsIndex - 1 >= 0)
+            loadStep(currentStepsIndex - 1);
+        }, false);
+
+        nextBtn.addEventListener("click", function() {
+          if(currentStepsIndex + 1 < steps.length)
+            loadStep(currentStepsIndex + 1);
+        }, false);
+
+        function loadStep(index) {
+          setStep(index);
+
+          var slides = $$(".slide")
+          for(var i = 0; i < slides.length; i++) {
+            var slide = slides[i];
+            slide.classList.add("hide");
+          }
+
+          var step = steps[currentStepsIndex];
+
+          $(".slide.slide-" + step.name).classList.remove("hide");
+          if("init" in step)
+            step.init();
+
+          // showManual(1);
+        }
+
+        function setStep(index) {
+          currentStepsIndex = index;
+
+          if(currentStepsIndex == 0)
+            backBtn.setAttribute("disabled", "disabled");
+          else
+            backBtn.removeAttribute("disabled", "disabled");
+
+          if(currentStepsIndex == steps.length - 1)
+            nextBtn.setAttribute("disabled", "disabled");
+          else
+            nextBtn.removeAttribute("disabled");
+        }
+
+        loadStep(currentStepsIndex);
+      })();
+      </script>
+
+      <div id="addNote" class="form">
         <form>
           <h1>Nowa notatka</h1>
           <div class="table">
@@ -23,11 +138,13 @@
               <div class="cell"><input id="addNoteContent" class="content" type="text" /></div>
             </div>
           </div>
-          <input class="submit" type="submit" value="dodaj" />
+          <div class="rightBtns">
+            <input class="submit" type="submit" value="dodaj" />
+          </div>
         </form>
       </div>
 
-      <div id="notesList">
+      <div id="notesList" class="form">
         <h1>Notatki Leny</h1>
 
         <label>
@@ -45,8 +162,6 @@
     </main>
 
     <script>
-    var $ = document.querySelector.bind(document);
-
     var utils = (function() {
       function gettingJson(url) {
         return new Promise(function(resolve) {
@@ -134,11 +249,9 @@
       }
 
       function renderNote(note) {
-        console.log(note.content);
-
         var noteDiv = document.createElement("div");
         noteDiv.style.backgroundColor = "#" + note.colorRGB;
-        noteDiv.className = "note";
+        noteDiv.className = "note round";
 
         var titleP = document.createElement("p");
         titleP.className = "title";
