@@ -6,3 +6,13 @@ body {
 a {
   color: #00B7FF;
 }
+
+.intro {
+  font-weight: bold;
+  font-size: 30px;
+  color: red;
+}
+
+main {
+  text-align: center;
+}

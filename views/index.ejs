@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <meta charset='utf-8' />
     <link rel="stylesheet" href="highlightjs/styles/default.css" />
@@ -12,18 +11,20 @@
       <input id="dbResetBtn" type="button" value="Przywróć bazę do stanu początkowego" />
 
       <div id="addNote">
-        <h1>Nowa notatka</h1><br />
-        <div class="table">
-          <div class="row">
-            <div class="cell"><label for="addNoteTitle">tytuł: </label></div>
-            <div class="cell"><input id="addNoteTitle" class="title" type="text" /></div>
+        <form>
+          <h1>Nowa notatka</h1>
+          <div class="table">
+            <div class="row">
+              <div class="cell"><label for="addNoteTitle">tytuł: </label></div>
+              <div class="cell"><input id="addNoteTitle" class="title" type="text" /></div>
+            </div>
+            <div class="row">
+              <div class="cell"><label for="addNoteContent">treść: </label></div>
+              <div class="cell"><input id="addNoteContent" class="content" type="text" /></div>
+            </div>
           </div>
-          <div class="row">
-            <div class="cell"><label for="addNoteContent">treść: </label></div>
-            <div class="cell"><input id="addNoteContent" class="content" type="text" /></div>
-          </div>
-        </div>
-        <input class="submit" type="button" value="dodaj" />
+          <input class="submit" type="submit" value="dodaj" />
+        </form>
       </div>
 
       <div id="notesList">
@@ -96,7 +97,7 @@
       dbResetBtn.addEventListener("click", function() {
         utils.gettingJson("/resetDb")
         .then(function() {
-          console.log("db");
+          notesList.filterNotes("");
         });
       }, false);
     })();
@@ -112,7 +113,7 @@
       });
 
       function filterNotes(input) {
-        var url = "/test?input=" + encodeURIComponent(input);
+        var url = "/notes/filter?input=" + encodeURIComponent(input);
         utils.gettingJson(url)
         .then(function(ret) {
           renderNotes(ret.notes);
@@ -133,6 +134,8 @@
       }
 
       function renderNote(note) {
+        console.log(note.content);
+
         var noteDiv = document.createElement("div");
         noteDiv.style.backgroundColor = "#" + note.colorRGB;
         noteDiv.className = "note";
@@ -152,6 +155,10 @@
       }
 
       filterNotes("");
+
+      return {
+        filterNotes: filterNotes
+      };
     })();
 
     (function() {
@@ -159,18 +166,21 @@
       var titleInput = $("#addNote .title");
       var contentInput = $("#addNote .content");
 
-      submitBtn.addEventListener("click", function() {
-        console.log(titleInput.value);
+      submitBtn.addEventListener("click", function(event) {
+        event.preventDefault();
+
         addNote(titleInput.value, contentInput.value);
+        titleInput.value = "";
+        contentInput.value = "";
       }, false);
 
       function addNote(title, content) {
-        utils.posting("/addNote", {
+        utils.posting("/notes/add", {
           title: title,
           content: content
         })
         .then(function() {
-          console.log("works");
+          notesList.filterNotes("");
         });
       }
     })();
