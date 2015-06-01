@@ -3,7 +3,7 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-input[type=button], input[type=submit] {
+input[type=button], button, input[type=submit] {
 	border : solid 1px #288c1a;
 	border-radius : 20px 3px 20px 4px ;
 	moz-border-radius : 20px 3px 20px 4px ;
@@ -22,7 +22,7 @@ input[type=button], input[type=submit] {
 	background : linear-gradient(top, #31fa1e 0%, #30ab00 100%);
 }
 
-input[type=button]:disabled, input[type=submit]:disabled {
+input[type=button]:disabled, button:disabled, input[type=submit]:disabled {
 	border : solid 1px black;
 	border-radius : 20px 3px 20px 4px ;
 	moz-border-radius : 20px 3px 20px 4px ;
@@ -116,5 +116,10 @@ main {
 
 .important {
   color: lightgreen;
+  font-weight: bold;
+}
+
+.warning {
+  color: red;
   font-weight: bold;
 }

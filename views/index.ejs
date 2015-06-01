@@ -45,10 +45,39 @@
           </p>
         </div>
 
+        <div class="slide slide-sqlInjectionSolution">
+          <p>
+            Rozwiązanie to np.: "<span class="important">') or 1=1 -- </span>"
+          </p>
+          <p>
+            ') - by poprawnie zakończyć istniejący warunek filtrujący po tytule
+          </p>
+          <p>
+            or 1=1 - warunek, który sprawia, że cały ograniczenie po tytule nie działa (1=1 zawsze jest prawdą)
+          </p>
+          <p>
+            {{spacja}}--{{spacja}} - rozpoczęcie komentarza, komentujemy warunek filtrujący po treści notatki
+          </p>
+        </div>
+
+        <div class="slide slide-deleteNotes">
+          <p>
+            Podsumowiąc. Lena odkryła notatki jej koleżanki Oliwii:
+          </p>
+          <p>
+            <img src="images/fuuu.png" width="200" />
+          </p>
+        </div>
+
+        <div class="slide slide-deleteNotesSolution">
+          <p>
+          </p>
+        </div>
+
         <div class="rightBtns">
-          <input class="back" type="button" value="Wstecz" />
-          <input id="dbResetBtn" type="button" value="Przywróć bazę do stanu początkowego" />
-          <input class="next" type="button" value="Dalej" />
+          <button class="back" />
+          <button id="dbResetBtn">przywróć bazę do stanu początkowego</button>
+          <button class="next" />
         </div>
       </div>
 
@@ -71,11 +100,17 @@
           },
           {
             name: "sqlInjection",
-            isSolution: true,
             init: function() {
               var notesListContainer = $("#notesList");
               notesListContainer.classList.add("visible");
             }
+          },
+          {
+            name: "sqlInjectionSolution",
+            customNextLabel: "<span class='warning'>rozwiązanie</span>"
+          },
+          {
+            name: "deleteNotes"
           }
         ];
 
@@ -104,7 +139,25 @@
           if("init" in step)
             step.init();
 
-          // showManual(1);
+          var nextStep = getNextStep();
+          if(nextStep && nextStep.customNextLabel)
+            nextBtn.innerHTML = nextStep.customNextLabel;
+          else
+            nextBtn.innerHTML = "dalej";
+
+          backBtn.innerHTML = "wstecz";
+        }
+
+        // function getBackStep() {
+        //   if(currentStepsIndex > 0)
+        //     return steps[currentStepsIndex - 1];
+        //   return null;
+        // }
+
+        function getNextStep() {
+          if(currentStepsIndex < steps.length - 1)
+            return steps[currentStepsIndex + 1];
+          return null;
         }
 
         function setStep(index) {
