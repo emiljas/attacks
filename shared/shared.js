@@ -16,7 +16,7 @@ module.exports = {
         database : 'attacks',
         user     : 'root',
         password : '1234567',
-        multipleStatements: true //this is bad!
+        multipleStatements: true
       });
       connection.connect();
 

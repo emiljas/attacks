@@ -71,6 +71,33 @@
 
         <div class="slide slide-deleteNotesSolution">
           <p>
+            Rozwiązanie to np.: "<span class="important">'); delete from note where userId = 2; -- </span>"
+          </p>
+          <p>
+            Zakończyliśmy zapytanie jak w poprzednim przykładzie i dodaliśmy usunięcie notatek użytkownika o id 2.
+          </p>
+        </div>
+
+        <div class="slide slide-preventSqlInjectionByDisableMultipleStatements">
+          <p>
+            Pomyślmy co powinien zrobić programista tej aplikacji by uniknąć ataku SqlInjection.
+          </p>
+          <p>
+            Spójrz na plik shared/shared.js - funkcję executingSql.<br />
+            To tutaj odbywa się tworzenie połączenia do bazy danych.<br />
+            To co powinno zwrócić twoją uwagę to linijka "<span class="important">multipleStatements: true</span>".<br />
+            Sprawdź dlaczego ta opcja nie powinna być ustawiona na false w <a href="https://github.com/felixge/node-mysql/">dokumentacji</a>.
+          </p>
+        </div>
+
+        <div class="slide slide-preventSqlInjectionByEscape">
+          <p>
+            Nie jest to jednak całkowite rozwiązanie problemu.
+          </p>
+          <p>
+            Przede wszystkim należy zadbać by wyciąć niebezpieczne znaki z wszystkich fraz wpisanych przez użytkownika, które trafiają do zapytania SQL.<br />
+            Biblioteka, która została użyta do wykonywania zapytań,
+            udostępnia nam taką funkcjonalność (<a href="https://github.com/felixge/node-mysql/#escaping-query-values">dokumentacja</a>).
           </p>
         </div>
 
@@ -88,7 +115,6 @@
       (function() {
         var backBtn = $("#manual .back");
         var nextBtn = $("#manual .next");
-
         var currentStepsIndex = 0;
 
         var steps = [
@@ -111,6 +137,16 @@
           },
           {
             name: "deleteNotes"
+          },
+          {
+            name: "deleteNotesSolution",
+            customNextLabel: "<span class='warning'>rozwiązanie</span>"
+          },
+          {
+            name: "preventSqlInjectionByDisableMultipleStatements"
+          },
+          {
+            name: "preventSqlInjectionByEscape"
           }
         ];
 
