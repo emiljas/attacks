@@ -1,0 +1,16 @@
+<p>
+  Potrzebujemy uruchomić nową stronę - tą z której przeprowadzimy atak:<br />
+  cd ścieżka/do/tego/projektu/maliciousSite/<br />
+  npm start<br />
+</p>
+<p>
+  <a href="http://localhost:3001" target="_blank">uruchom złośliwą stronę LOL</a>
+</p>
+<p>
+  Złośliwa stroną na starcie powinna dodać nową notatkę. Odśwież stronę i sprawdź.
+</p>
+<p>
+  By zrozumieć jak to możliwe musisz przeanalizować dwa pliki:<br />
+  maliciousSite/views/index.ejs (niewidoczny dla użytkownika iframe)<br />
+  maliciousSite/public/htmls/hiddenIframe.html (formularz dodający notatkę z uprawnieniami użytkownika)
+</p>

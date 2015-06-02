@@ -1,0 +1,14 @@
+<p>
+  Spójrzmy na nowy formularz - dodawania nowej notatki.
+</p>
+<p>
+  Przeprowadzisz teraz atak "<span class="important">cross-site request forgery</span>".<br />
+  Polega on na wykorzystaniu uprawnień ofiary do wykonania operacji w przeciwnym razie wymagających jej zgody.<br />
+  Włącz narzędzia developerskie w przeglądarce Chrome (F12) i przejdź do Resources -> Cookies -> localhost.<br />
+  Spójrz na ciasteczko o nazwie "auth". Znajduje się w nim token, który jest niezbędny do dodawania notatki.<br />
+  Ciasteczko jest tworzone automatycznie przy starcie strony.
+</p>
+<p>
+  Spróbuj teraz dodać nową notatkę. Następnie usuń ciasteczko i dodaj inną notatkę, by potwierdzić, że ciasteczko jest niezbędne.<br />
+  Następnie odśwież stronę by ponownie wygenerować token.
+</p>

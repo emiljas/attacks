@@ -1,0 +1,9 @@
+<p>
+  Pomyślmy co powinien zrobić programista tej aplikacji by uniknąć ataku SqlInjection.
+</p>
+<p>
+  Spójrz na plik shared/shared.js - funkcję executingSql.<br />
+  To tutaj odbywa się tworzenie połączenia do bazy danych.<br />
+  To co powinno zwrócić twoją uwagę to linijka "<span class="important">multipleStatements: true</span>".<br />
+  Sprawdź dlaczego ta opcja nie powinna być ustawiona na false w <a href="https://github.com/felixge/node-mysql/#multiple-statement-queries" target="_blank">dokumentacji</a>.
+</p>

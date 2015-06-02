@@ -8,98 +8,8 @@
   </head>
   <body>
     <main>
-
       <div id="manual" class="form visible round">
-        <div class="slide slide-intro hide">
-          <p>OK, możemy zaczynać?</p>
-          <p>W tym polu będą się wyświetlały instrukcję, które należy wykonać.</p>
-          <p>Ich wykonanie pozwoli ci zaznajomić się z najczęstszymi atakami stosowanymi na stronach internetowych.</p>
-          <p>Jeśli w przyszłości masz zamiar napisać jakikolwiek kawałek kodu wykonywanego w przeglądarce lub na serwerze powinieneś o nich wiedzieć.</p>
-        </div>
-
-        <div class="slide slide-basicInformation hide">
-          <p>
-            Użyj przeglądarki Google Chrome.
-          </p>
-          <p>
-            Kod aplikacji, którą właśnie używasz została napisana wyłącznie w języku JavaScript. Zarówno część wykonywana w przeglądarce, jak i na serwerze.
-          </p>
-          <p>
-            Gdy zmienisz kod wykonywany po stronie przeglądarki wystarczy, że odświeżysz stronę.
-          </p>
-          <p>
-            Gdy zmienisz kod wykonywany po stronie serwera uruchom ponownie aplikację.
-          </p>
-          </p>
-        </div>
-
-        <div class="slide slide-sqlInjection">
-          <p>
-            Pierwszy atak, które wykonasz to <span class="important">SqlInjection</span>.
-          </p>
-          <p>
-            Załóżmy, że poniższy ekran to prawdziwa aplikacja, w której Lena zarządza swoimi notatkami.<br />
-            Lena wie, że z tej samej aplikacji korzysta również Oliwia.<br />
-            Aplikacja udostępnia funkcję filtrowania. W tym celu wykonywane jest zapytanie, które jest wyświetlane pod notatkami.<br />
-            Spróbuj teraz wylistować wszystkie notatki.
-          </p>
-        </div>
-
-        <div class="slide slide-sqlInjectionSolution">
-          <p>
-            Rozwiązanie to np.: "<span class="important">') or 1=1 -- </span>"
-          </p>
-          <p>
-            ') - by poprawnie zakończyć istniejący warunek filtrujący po tytule
-          </p>
-          <p>
-            or 1=1 - warunek, który sprawia, że cały ograniczenie po tytule nie działa (1=1 zawsze jest prawdą)
-          </p>
-          <p>
-            {{spacja}}--{{spacja}} - rozpoczęcie komentarza, komentujemy warunek filtrujący po treści notatki
-          </p>
-        </div>
-
-        <div class="slide slide-deleteNotes">
-          <p>
-            Podsumowiąc. Lena odkryła notatki jej koleżanki Oliwii:
-          </p>
-          <p>
-            <img src="images/fuuu.png" width="200" />
-          </p>
-        </div>
-
-        <div class="slide slide-deleteNotesSolution">
-          <p>
-            Rozwiązanie to np.: "<span class="important">'); delete from note where userId = 2; -- </span>"
-          </p>
-          <p>
-            Zakończyliśmy zapytanie jak w poprzednim przykładzie i dodaliśmy usunięcie notatek użytkownika o id 2.
-          </p>
-        </div>
-
-        <div class="slide slide-preventSqlInjectionByDisableMultipleStatements">
-          <p>
-            Pomyślmy co powinien zrobić programista tej aplikacji by uniknąć ataku SqlInjection.
-          </p>
-          <p>
-            Spójrz na plik shared/shared.js - funkcję executingSql.<br />
-            To tutaj odbywa się tworzenie połączenia do bazy danych.<br />
-            To co powinno zwrócić twoją uwagę to linijka "<span class="important">multipleStatements: true</span>".<br />
-            Sprawdź dlaczego ta opcja nie powinna być ustawiona na false w <a href="https://github.com/felixge/node-mysql/">dokumentacji</a>.
-          </p>
-        </div>
-
-        <div class="slide slide-preventSqlInjectionByEscape">
-          <p>
-            Nie jest to jednak całkowite rozwiązanie problemu.
-          </p>
-          <p>
-            Przede wszystkim należy zadbać by wyciąć niebezpieczne znaki z wszystkich fraz wpisanych przez użytkownika, które trafiają do zapytania SQL.<br />
-            Biblioteka, która została użyta do wykonywania zapytań,
-            udostępnia nam taką funkcjonalność (<a href="https://github.com/felixge/node-mysql/#escaping-query-values">dokumentacja</a>).
-          </p>
-        </div>
+        <div class="slide"></div>
 
         <div class="rightBtns">
           <button class="back" />
@@ -107,112 +17,6 @@
           <button class="next" />
         </div>
       </div>
-
-      <script>
-      var $ = document.querySelector.bind(document);
-      var $$ = document.querySelectorAll.bind(document);
-
-      (function() {
-        var backBtn = $("#manual .back");
-        var nextBtn = $("#manual .next");
-        var currentStepsIndex = 0;
-
-        var steps = [
-          {
-            name: "intro"
-          },
-          {
-            name: "basicInformation"
-          },
-          {
-            name: "sqlInjection",
-            init: function() {
-              var notesListContainer = $("#notesList");
-              notesListContainer.classList.add("visible");
-            }
-          },
-          {
-            name: "sqlInjectionSolution",
-            customNextLabel: "<span class='warning'>rozwiązanie</span>"
-          },
-          {
-            name: "deleteNotes"
-          },
-          {
-            name: "deleteNotesSolution",
-            customNextLabel: "<span class='warning'>rozwiązanie</span>"
-          },
-          {
-            name: "preventSqlInjectionByDisableMultipleStatements"
-          },
-          {
-            name: "preventSqlInjectionByEscape"
-          }
-        ];
-
-        backBtn.addEventListener("click", function() {
-          if(currentStepsIndex - 1 >= 0)
-            loadStep(currentStepsIndex - 1);
-        }, false);
-
-        nextBtn.addEventListener("click", function() {
-          if(currentStepsIndex + 1 < steps.length)
-            loadStep(currentStepsIndex + 1);
-        }, false);
-
-        function loadStep(index) {
-          setStep(index);
-
-          var slides = $$(".slide")
-          for(var i = 0; i < slides.length; i++) {
-            var slide = slides[i];
-            slide.classList.add("hide");
-          }
-
-          var step = steps[currentStepsIndex];
-
-          $(".slide.slide-" + step.name).classList.remove("hide");
-          if("init" in step)
-            step.init();
-
-          var nextStep = getNextStep();
-          if(nextStep && nextStep.customNextLabel)
-            nextBtn.innerHTML = nextStep.customNextLabel;
-          else
-            nextBtn.innerHTML = "dalej";
-
-          backBtn.innerHTML = "wstecz";
-        }
-
-        // function getBackStep() {
-        //   if(currentStepsIndex > 0)
-        //     return steps[currentStepsIndex - 1];
-        //   return null;
-        // }
-
-        function getNextStep() {
-          if(currentStepsIndex < steps.length - 1)
-            return steps[currentStepsIndex + 1];
-          return null;
-        }
-
-        function setStep(index) {
-          currentStepsIndex = index;
-
-          if(currentStepsIndex == 0)
-            backBtn.setAttribute("disabled", "disabled");
-          else
-            backBtn.removeAttribute("disabled", "disabled");
-
-          if(currentStepsIndex == steps.length - 1)
-            nextBtn.setAttribute("disabled", "disabled");
-          else
-            nextBtn.removeAttribute("disabled");
-        }
-
-        loadStep(currentStepsIndex);
-      })();
-      </script>
 
       <div id="addNote" class="form">
         <form>
@@ -251,6 +55,9 @@
     </main>
 
     <script>
+    var $ = document.querySelector.bind(document);
+    var $$ = document.querySelectorAll.bind(document);
+
     var utils = (function() {
       function gettingJson(url) {
         return new Promise(function(resolve) {
@@ -289,12 +96,29 @@
         });
       }
 
+      function gettingFile(url) {
+        return new Promise(function(resolve) {
+          var req = new XMLHttpRequest();
+          req.open("get", url, true);
+
+          req.onreadystatechange = function () {
+            if (req.readyState == 4) {
+              if(req.status == 200)
+                resolve(req.response);
+            }
+          };
+          req.send(null);
+        });
+      }
+
       return {
         gettingJson: gettingJson,
-        posting: posting
+        posting: posting,
+        gettingFile
       };
     })();
-
+    </script>
+    <script>
     (function() {
       var dbResetBtn = $("#dbResetBtn");
 
@@ -384,6 +208,125 @@
         .then(function() {
           notesList.filterNotes("");
         });
+      }
+    })();
+    </script>
+    <script>
+    (function() {
+      var slideDiv = $("#manual .slide");
+      var backBtn = $("#manual .back");
+      var nextBtn = $("#manual .next");
+
+      function getCurrentStepsIndex() {
+        var item = localStorage.getItem("currentStepsIndex");
+        if(item)
+          return parseInt(item);
+        return null;
+      }
+
+      if(!getCurrentStepsIndex())
+        localStorage.setItem("currentStepsIndex", 0);
+
+      var steps = [
+        {
+          fileName: "htmls/intro.html"
+        },
+        {
+          fileName: "htmls/basicInformation.html"
+        },
+        {
+          fileName: "htmls/sqlInjection.html",
+          init: function() {
+            var notesListContainer = $("#notesList");
+            notesListContainer.classList.add("visible");
+          }
+        },
+        {
+          fileName: "htmls/sqlInjectionSolution.html",
+          customNextLabel: "<span class='warning'>rozwiązanie</span>"
+        },
+        {
+          fileName: "htmls/deleteNotes.html"
+        },
+        {
+          fileName: "htmls/deleteNotesSolution.html",
+          customNextLabel: "<span class='warning'>rozwiązanie</span>"
+        },
+        {
+          fileName: "htmls/preventSqlInjectionByDisableMultipleStatements.html"
+        },
+        {
+          fileName: "htmls/preventSqlInjectionByEscape.html"
+        },
+        {
+          fileName: "htmls/addNoteForm.html",
+          init: function() {
+            var addNoteContainer = $("#addNote");
+            addNoteContainer.classList.add("visible");
+          }
+        },
+        {
+          fileName: "htmls/setUpMaliciousSite.html"
+        }
+      ];
+
+      backBtn.addEventListener("click", function() {
+        if(getCurrentStepsIndex() - 1 >= 0)
+          loadStep(getCurrentStepsIndex() - 1);
+      }, false);
+
+      nextBtn.addEventListener("click", function() {
+        if(getCurrentStepsIndex() + 1 < steps.length)
+          loadStep(getCurrentStepsIndex() + 1);
+      }, false);
+
+      function loadStep(index) {
+        setStep(index);
+
+        var step = steps[getCurrentStepsIndex()];
+
+        utils.gettingFile(step.fileName)
+        .then(function(content) {
+          slideDiv.innerHTML = content;
+        });
+
+        if("init" in step)
+          step.init();
+
+        var nextStep = getNextStep();
+        if(nextStep && nextStep.customNextLabel)
+          nextBtn.innerHTML = nextStep.customNextLabel;
+        else
+          nextBtn.innerHTML = "dalej";
+
+        backBtn.innerHTML = "wstecz";
+      }
+
+      function getNextStep() {
+        if(getCurrentStepsIndex() < steps.length - 1)
+          return steps[getCurrentStepsIndex() + 1];
+        return null;
+      }
+
+      function setStep(index) {
+        localStorage.setItem("currentStepsIndex", index);
+
+        if(getCurrentStepsIndex() == 0)
+          backBtn.setAttribute("disabled", "disabled");
+        else
+          backBtn.removeAttribute("disabled", "disabled");
+
+        if(getCurrentStepsIndex() == steps.length - 1)
+          nextBtn.setAttribute("disabled", "disabled");
+        else
+          nextBtn.removeAttribute("disabled");
+      }
+
+      loadStep(getCurrentStepsIndex());
+      for(var i = 0; i < getCurrentStepsIndex(); i++) {
+        var step = steps[i];
+        if("init" in step)
+          step.init();
       }
     })();
     </script>
