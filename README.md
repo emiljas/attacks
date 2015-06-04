@@ -2,7 +2,7 @@
 
 By uruchomić aplikację należy:
 
-zainstalować bazę mysql, użytkownik root, hasło 1234567
+zainstalować nodejs, npm, bazę mysql, użytkownik root, hasło 1234567
 
 `cd sciezka/do/tego/projektu`
 
