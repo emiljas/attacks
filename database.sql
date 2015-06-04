@@ -1,4 +1,4 @@
-drop database attacks;
+drop database if exists attacks;
 
 create database attacks charset=utf8;
 

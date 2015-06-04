@@ -1,7 +1,0 @@
-DEBUG=Attacks:* ./bin/www
-
-mysql -u root -p1234567 < database.sql
-
-https://www.google.com/about/appsecurity/learning/xss/#HowToTest
-
-https://pl.wikipedia.org/wiki/SQL_injection
